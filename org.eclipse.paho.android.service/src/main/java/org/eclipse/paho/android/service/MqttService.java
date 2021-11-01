@@ -591,11 +591,15 @@ public class MqttService extends Service implements MqttTraceHandler {
    * @return the MqttConnection identified by this handle
    */
   private MqttConnection getConnection(String clientHandle) {
-    MqttConnection client = connections.get(clientHandle);
-    if (client == null) {
-      throw new IllegalArgumentException("Invalid ClientHandle");
+    try {
+      MqttConnection client = connections.get(clientHandle);
+      if (client == null) {
+        throw new IllegalArgumentException("Invalid ClientHandle");
+      }
+      return client;
+    } catch (NullPointerException e) {
+      throw  new NullPointerException("NPE int or null");
     }
-    return client;
   }
 
   /**

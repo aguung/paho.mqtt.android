@@ -2,12 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId "paho.mqtt.java.example"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
     }
@@ -34,22 +33,24 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', excludes: ["org.eclipse.paho.client.mqttv3-${rootProject.ext.clientVersion}.jar"], include: '*.jar')
     testImplementation 'junit:junit:4.12'
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
-    implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibVersion}"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:${rootProject.ext.clientVersion}"
 //    compile (project(':org.eclipse.paho.android.service')){
 //        exclude module: "org.eclipse.paho.client.mqttv3"
 //        //transitive=true
 //    }
 
-    implementation (project(':org.eclipse.paho.android.service')){
+    implementation(project(':org.eclipse.paho.android.service')) {
         //exclude module: "org.eclipse.paho.client.mqttv3"
-        transitive=true
+        transitive = true
     }
 }
 
 //configurations.compile.exclude module: 'org.eclipse.paho.client.mqttv3'
-task debug << {
-    configurations.compile.each { println it}
+task debug {
+    doLast {
+        configurations.compile.each { println it }
+    }
 }

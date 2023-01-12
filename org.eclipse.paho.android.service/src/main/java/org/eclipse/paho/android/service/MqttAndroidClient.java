@@ -55,7 +55,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.SparseArray;
 
 /**
@@ -1366,7 +1366,7 @@ public class MqttAndroidClient extends BroadcastReceiver implements
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Bundle data = intent.getExtras();
-
+		System.out.println("TAGED : "+data);
 		String handleFromIntent = data
 				.getString(MqttServiceConstants.CALLBACK_CLIENT_HANDLE);
 
@@ -1684,7 +1684,7 @@ public class MqttAndroidClient extends BroadcastReceiver implements
 	public void deleteBufferedMessage(int bufferIndex){
 		mqttService.deleteBufferedMessage(clientHandle, bufferIndex);
 	}
-	
+
 	/**
 	 * Get the SSLSocketFactory using SSL key store and password
 	 * <p>

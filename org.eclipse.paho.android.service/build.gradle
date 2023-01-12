@@ -4,7 +4,6 @@ apply from: 'publish.gradle'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 9
@@ -34,12 +33,14 @@ repositories {
 }
 
 configurations {
-   //androidTestCompile.exclude module: 'org.eclipse.paho.client.mqttv3'
+    //androidTestCompile.exclude module: 'org.eclipse.paho.client.mqttv3'
 }
 
 dependencies {
     implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:${rootProject.ext.clientVersion}"
-    implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
+    implementation "androidx.core:core:1.4.0"
+    implementation("androidx.work:work-runtime:2.7.1")
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
 
@@ -120,8 +121,10 @@ publishing {
 }
 
 
-task debug << {
-    configurations.compile.each { println it}
+task debug {
+    doLast {
+        configurations.compile.each { println it }
+    }
 }
 // Required to bundle Java library Jar in AAR
 //clean.doLast{

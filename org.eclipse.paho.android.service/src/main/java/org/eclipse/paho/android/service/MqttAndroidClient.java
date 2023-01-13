@@ -1366,7 +1366,6 @@ public class MqttAndroidClient extends BroadcastReceiver implements
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Bundle data = intent.getExtras();
-		System.out.println("TAGED : "+data);
 		String handleFromIntent = data
 				.getString(MqttServiceConstants.CALLBACK_CLIENT_HANDLE);
 

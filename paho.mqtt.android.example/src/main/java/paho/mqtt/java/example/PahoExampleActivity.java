@@ -41,12 +41,12 @@ public class PahoExampleActivity extends AppCompatActivity{
 
     MqttAndroidClient mqttAndroidClient;
 
-//    final String serverUri = "ssl://realtime-dg.qiscus.com:1885";
-    final String serverUri = "tcp://realtime-bali.qiscus.com:1883";
+    final String serverUri = "ssl://realtime-dg.qiscus.com:1885";
+//    final String serverUri = "tcp://realtime-bali.qiscus.com:1883";
 
 //    String clientId = "duniagames-roomchat-android-1673482699";
     String clientId = "1ce439ab-fd95-4f35-9ada-999701a348e5";
-    final String subscriptionTopic = "exampleAndroidTopic";
+    final String subscriptionTopic = "2adf5b9d-ecfc-4be0-a4bd-ee709b9d7241/dg/n";
     final String publishTopic = "exampleAndroidPublishTopic";
     final String publishMessage = "Hello World!";
 
@@ -190,7 +190,7 @@ public class PahoExampleActivity extends AppCompatActivity{
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     // message Arrived!
-                    System.out.println("Message: " + topic + " : " + new String(message.getPayload()));
+                    runOnUiThread(() -> addToHistory("Incoming message: " + new String(message.getPayload())));
                 }
             });
 

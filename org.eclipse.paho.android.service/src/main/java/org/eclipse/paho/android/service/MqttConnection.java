@@ -951,7 +951,7 @@ class MqttConnection implements MqttCallbackExtended {
 			wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
 					wakeLockTag);
 		}
-		wakelock.acquire();
+		wakelock.acquire(30 * 1000L /* 30 seconds*/);
 
 	}
 

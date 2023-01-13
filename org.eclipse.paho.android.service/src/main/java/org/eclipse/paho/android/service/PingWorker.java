@@ -10,8 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+
 public class PingWorker extends Worker {
-    private static final String TAG = "AlarmPingSender";
+    private static final String TAG = "PingWorker";
+    private static final String WAKELOG_TAG = "MQTTQiscus::tag";
 
     public PingWorker(
             @NonNull Context context,
@@ -22,19 +26,41 @@ public class PingWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        // According to the docs, "Alarm Manager holds a CPU wake lock as
-        // long as the alarm receiver's onReceive() method is executing.
-        // This guarantees that the phone will not sleep until you have
-        // finished handling the broadcast.", but this class still get
-        // a wake lock to wait for ping finished.
+        Log.d(TAG, "Ping Workmanager at:" + System.currentTimeMillis());
 
-        Log.d(TAG, "Sending Ping at:" + System.currentTimeMillis());
+        // Handle when client commons is null when app is killed
+        if (QiscusMqtt.getInstance().getComms() != null){
+            // Assign new callback to token to execute code after PingResq
+            // arrives. Get another wakelock even receiver already has one,
+            // release it until ping response returns.
+            PowerManager pm = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+            PowerManager.WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOG_TAG);
+            wakelock.acquire(30 * 1000L /* 30 seconds*/);
 
-        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MQTT::tag");
-        wakelock.acquire(1 * 10 * 1000L /*1 minutes*/);
-        if (wakelock.isHeld()) {
-            wakelock.release();
+            IMqttToken token = QiscusMqtt.getInstance().getComms().checkForActivity(new IMqttActionListener() {
+
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, "Success. Release lock(" + WAKELOG_TAG + "):"
+                            + System.currentTimeMillis());
+                    //Release wakelock when it is done.
+                    wakelock.release();
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken,
+                                      Throwable exception) {
+                    Log.d(TAG, "Failure. Release lock(" + WAKELOG_TAG + "):"
+                            + System.currentTimeMillis());
+                    //Release wakelock when it is done.
+                    wakelock.release();
+                }
+            });
+
+
+            if (token == null && wakelock.isHeld()) {
+                wakelock.release();
+            }
         }
 
         return Result.success();
